@@ -1,0 +1,12 @@
+version: '3'
+services:
+    kibana:
+      image: kibana:6.5.4
+      hostname: kibana
+      depends_on:
+        - elastic
+      environment:
+        VIRTUAL_HOST: kibana.local
+        VIRTUAL_PORT: 5601
+        SERVER_NAME: kibana
+        ELASTICSEARCH_URL: http://elastic:9200

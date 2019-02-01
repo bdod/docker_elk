@@ -1,0 +1,22 @@
+version: '3'
+services:
+    metricbeat:
+      image: docker.elastic.co/beats/metricbeat:6.5.4
+      #network_mode: host
+      volumes:
+        - "./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml"
+        - "./metricbeat/modules.d:/usr/share/metricbeat/modules.d"
+        - "/proc:/host/proc:ro"
+        - "/sys:/host/sys:ro"
+        - "/:/host:ro"
+      command: -system.hostfs=/host
+    filebeat:
+      hostname: filebeat.deus.zone
+      image: docker.elastic.co/beats/filebeat:6.5.4
+      user: root
+      volumes:
+        - "/var/log:/host/var/log:ro"
+        - "./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
+        - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      command: filebeat -e -strict.perms=false  -E output.elasticsearch.hosts=["elastic:9200"]
